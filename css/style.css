@@ -142,6 +142,24 @@ em {
   fill: #fff;
   pointer-events: none;
 }
+.al_header_menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.al_header_menu > li {
+  height: 38px;
+  padding: 10px 14px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.al_header_menu > li:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+.al_header_menu a {
+  font-size: 14px;
+  padding: 0;
+}
 @charset "UTF-8";
 .al_index_background {
   z-index: 10;
