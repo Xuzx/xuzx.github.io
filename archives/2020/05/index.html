@@ -80,6 +80,8 @@
                         
                         
                     </div>
+
+                    <p id="/" class="leancloud_visitors">Pageviews: <span class="leancloud-visitors-count"></span></p>
                 </div>
             
         </div>
@@ -153,6 +155,31 @@
             </nav>
         </div>
     </div>
+
+    
+      <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+      <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+      <script type="text/javascript">
+        var GUEST = ['nick','mail','link'];
+        var guest = 'nick,mail,link';
+        guest = guest.split(',').filter(item=>{
+          return GUEST.indexOf(item)>-1;
+        });
+        new Valine({
+            el: '#valine_comments' ,
+            appId: 'U6eh11W93xRWiH6pkhqG7X9r-gzGzoHsz',
+            appKey: 'cW84nPwssciLpcIM3lLaHvPA',
+            placeholder: 'Just go go',
+            avatar:'mm',
+            visitor:true,
+            enableQQ:true,
+            guest_info:guest,
+            pageSize:'10' || 10,
+        });
+      </script>
+
+    
 
         <div class="al_index_footer dis_flex_center">
     <div class="al_index_footer_item al_index_footer_title">
