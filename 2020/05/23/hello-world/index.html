@@ -11,8 +11,6 @@
 
         
     
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
-    
     <link rel='stylesheet' href="/./css/dracula.css">
 
     <meta name="generator" content="Hexo 4.2.1"></head>
@@ -26,16 +24,6 @@
         </div>
 
         <div class="dis_flex_jcenter">
-            
-            <ul class="al_header_menu">
-                
-                
-                <li><a href="/">HOME</a></li>
-                
-                
-                <li><a href="/archives/">ARCHIVES</a></li>
-                
-            </ul>
             
             <div class="al_header_setting">
                 <svg class="al_header_icon">
@@ -65,7 +53,7 @@
             <div class="al_sidebar_author_info">
                 <h4>Xuzx</h4>
                 <img class="al_sidebar_avatar" src="https://avatars1.githubusercontent.com/u/6274670?s=460&u=efefa8aa547ddccd6c168aff94458e46cebba26b&v=4">
-                <p>Android Technology</p>
+                <p>Hey! I am a Android Developer.This is my blog about Android Technology.</p>
             </div>
 
             
@@ -116,7 +104,11 @@
                     </h1>
                     <div class="al_page_info dis_flex">
                         <div class="al_page_content_info">
-                            May 21, 2020 03:05 AM
+                            Posted on May 23, 2020
+                        </div>
+
+                        <div class="al_page_content_info leancloud_visitors">
+                            Visitors: <span class="leancloud-visitors-count"></span>
                         </div>
 
                         
@@ -152,20 +144,33 @@
 
                 
                 
-    <div id="al_gitalk_cnt">
-    <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: "866235dac66c712fee93",
-            clientSecret: "af1a119a4e253b68299647d64a88d0c5f504e8ca",
-            repo: "xuzx.github.io",
-            owner: "Xuzx",
-            admin: "Xuzx",
-            id: "Hello World",
-        });
-        gitalk.render("al_gitalk_cnt")
-    </script>
                 
+
+                
+  <div class="valine_comments" id="valine_comments"></div>
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#valine_comments' ,
+        appId: 'U6eh11W93xRWiH6pkhqG7X9r-gzGzoHsz',
+        appKey: 'cW84nPwssciLpcIM3lLaHvPA',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        visitor:true,
+        enableQQ:true,
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
 
 
             

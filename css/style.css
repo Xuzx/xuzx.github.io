@@ -439,6 +439,9 @@ em {
   -webkit-box-orient: vertical;
   white-space: normal;
 }
+.vinput {
+  font-family: "AvenirNext-Regular";
+}
 .al_page_content_outline {
   line-height: 20px;
   font-size: 0.7em;
