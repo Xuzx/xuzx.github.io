@@ -1,0 +1,557 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Android 增量更新方案调研</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=2.0">
+<link rel="stylesheet", href="/./css/style.css">
+<link rel="shortcut icon", href="/./favicon.ico">
+<link rel="apple-touch-icon", href="/./apple-touch-icon.png">
+
+        
+    
+    <link rel='stylesheet' href="/./css/dracula.css">
+
+    <meta name="generator" content="Hexo 4.2.1"></head>
+    <body>
+        <header class="al_header al_pos_fixed">
+    <div class="al_header_container dis_flex_jcenter">
+        <div class="al_header_container_left">
+            <div class="al_header_site_title">
+                <a href="/">XBlog</a>
+            </div>
+        </div>
+
+        <div class="dis_flex_jcenter">
+            
+            <div class="al_header_setting">
+                <svg class="al_header_icon">
+                    <use xmlns="http://www.w3.org/2000/svg" xlink:href="/assets/svg_icons.svg#svg-menu"></use>
+                </svg>
+            </div>
+        </div>
+    </div>
+</header>
+
+        <div class="al_sidebar">
+
+    <div class="al_sidebar_overlay al_full_cover"></div>
+
+    <div class="al_pos_fixed al_sidebar_cnt">
+        <div class="dis_flex_acenter al_sidebar_header">
+            <h3>XBlog</h3>
+            <div class="al_sidebar_close al_header_setting">
+                <svg class="al_header_icon">
+                    <use xmlns="http://www.w3.org/2000/svg" xlink:href="/assets/svg_icons.svg#svg-close"></use>
+                </svg>
+            </div>
+        </div>
+
+        <div class="al_sidebar_author_cnt">
+
+            <div class="al_sidebar_author_info">
+                <h4>Xuzx</h4>
+                
+                <img class="al_sidebar_avatar" src="../../../.././images/avator.png">
+                
+                <p>Hey! I am a Android Developer.This is my blog about Android Technology.</p>
+            </div>
+
+            
+                <div class="al_sidebar_contact_info">
+                    <h4>GET IN TOUCH</h4>
+                    <p>Contact Info description</p>
+
+                    <div class="dis_flex al_sidebar_social_widget">
+                        
+                        
+
+                        
+                        
+
+                        
+                        
+
+                        
+                        
+                            <div class="al_social_icon_cnt" data_link="https://www.github.com/Xuzx">
+                                <svg class="al_social_icon" id="github">
+                                    <use xmlns="http://www.w3.org/2000/svg" xlink:href="/assets/svg_icons.svg#icon_github"></use>
+                                </svg>
+                            </div>
+                        
+
+                        
+                        
+                    </div>
+
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+        
+    <div class="dis_flex_center al_lightbox_cnt al_full_cover">
+        <img class="al_lightbox_img"/>
+    </div>
+    <div class="al_page_background dis_flex_center al_full_cover"></div>
+    <div class="al_page_container">
+        <div class="al_pos_ab al_fake_background"></div>
+        <div class="al_main_container al_shadow al_main_page_container">
+            <article class="al_article">
+                <header>
+                    <h1 class="al_page_title">
+                        Android 增量更新方案调研
+                    </h1>
+                    <div class="al_page_info dis_flex">
+                        <div class="al_page_content_info">
+                            Posted on May 23, 2020
+                        </div>
+
+                        <div id="/2020/05/23/Android-Upgrade/" class="al_page_content_info leancloud_visitors">
+                            Visitors: <span class="leancloud-visitors-count"></span>
+                        </div>
+
+                        
+
+                        
+                        <span class="tags"></span>
+                    </div>
+                </header>
+
+                
+                    <div class="al_page_content_outline">
+                        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是增量更新"><span class="toc-text">什么是增量更新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增量更新方案对比"><span class="toc-text">增量更新方案对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试对比"><span class="toc-text">测试对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#环境配置"><span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第1组测试-15M-左右-APK"><span class="toc-text">第1组测试(15M 左右 APK)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第2组测试-100M-左右-APK"><span class="toc-text">第2组测试(100M 左右 APK)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第3组测试-500M-左右-APK"><span class="toc-text">第3组测试(500M 左右 APK)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第4组测试-1-8GB-左右-APK"><span class="toc-text">第4组测试(1.8GB 左右 APK)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-text">结论</span></a></li></ol>
+                    </div>
+                
+
+                
+                <section id="post-body">
+                    <h2 id="什么是增量更新"><a href="#什么是增量更新" class="headerlink" title="什么是增量更新"></a>什么是增量更新</h2><p>由于 APP 随着业务需求的不断迭代更新，功能越来越多（复杂），APK 包的体积也会越来越大，导致每次客户端升级更新操作需要占用更多的带宽流量、下载等待时间等等，因此需寻求一些更优的更新方案。</p>
+<p>通俗讲增量更新是将一个新版本 APK 包与旧版本 APK 包进行二进制差分对比，产生一个比原本更小的增量包，再给到客户端进行下载更新，增量更新与完全更新相对，流程如图1所示。</p>
+<p>增量更新的好处是能减少流量成本的消耗，降低客户端升级时间。  </p>
+<p><img src="/2020/05/23/Android-Upgrade/01.png" alt="01.png"></p>
+<p align="center" style="color:#888888;font-size:13px;margin-top:-10px">图1 增量更新流程</p>
+
+<h2 id="增量更新方案对比"><a href="#增量更新方案对比" class="headerlink" title="增量更新方案对比"></a>增量更新方案对比</h2><p>网上有许多增量更新方案，诸如 <a href="http://www.daemonology.net/bsdiff/" target="_blank" rel="noopener">BSDiff</a>、<a href="http://xdelta.org/" target="_blank" rel="noopener">Xdelta</a>、<a href="https://www.chromium.org/developers/design-documents/software-updates-courgette" target="_blank" rel="noopener">Courgette</a> 等。由于 Courgette 并不适用于 Android APK 更新，所以这里不对它进行对比测试。下表1是针对前两者方案进行对比。</p>
+<style>
+#post-body > table {
+    display: inline-table;
+}
+#post-body > table th, #post-body > table td {
+    padding: 12px 0px;
+}
+#post-body > table th:first-of-type {
+    width: 30%;
+}
+#post-body > table td:first-of-type {
+    padding: 12px 12px;
+}
+table th:nth-of-type(2) {
+    width: 35%;
+}
+table th:nth-of-type(3) {
+    width: 35%;
+}
+</style>
+
+<table>
+<thead>
+<tr>
+<th align="center">对比项</th>
+<th align="center">BSDiff</th>
+<th align="center">Xdelta3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">开源公司/作者</td>
+<td align="center">Colin Percival</td>
+<td align="center">Joshua MacDonald</td>
+</tr>
+<tr>
+<td align="center">开源许可证</td>
+<td align="center">BSD</td>
+<td align="center">Apache 2.0（3.x版本）</td>
+</tr>
+<tr>
+<td align="center">当前最新版本</td>
+<td align="center">4.3（目前调研使用版本）</td>
+<td align="center">3.1.0（目前调研使用版本）</td>
+</tr>
+<tr>
+<td align="center">开源项目地址</td>
+<td align="center"><a href="http://www.daemonology.net/bsdiff/" target="_blank" rel="noopener">项目地址</a></td>
+<td align="center"><a href="https://github.com/jmacd/xdelta" target="_blank" rel="noopener">项目地址</a></td>
+</tr>
+<tr>
+<td align="center">编码格式</td>
+<td align="center">-</td>
+<td align="center">VCDIFF（RFC 3284）</td>
+</tr>
+<tr>
+<td align="center">diff 动态库大小(.dll)</td>
+<td align="center">300KB左右</td>
+<td align="center">300KB左右</td>
+</tr>
+<tr>
+<td align="center">patch 动态库大小(.so)</td>
+<td align="center">250KB左右</td>
+<td align="center">350KB左右</td>
+</tr>
+<tr>
+<td align="center">支持文件大小</td>
+<td align="center">最大2 ^ 61-1B</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">差分包压缩算法</td>
+<td align="center">bzip2</td>
+<td align="center">Huffman、LZMA</td>
+</tr>
+<tr>
+<td align="center">压缩等级调整</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center"><span style="color:#3ddc84">√</span></td>
+</tr>
+<tr>
+<td align="center">补丁包二次压缩</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center"><span style="color:#3ddc84">√</span></td>
+</tr>
+<tr>
+<td align="center">窗口大小调整</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center"><span style="color:#3ddc84">√</span></td>
+</tr>
+<tr>
+<td align="center">学习成本评估</td>
+<td align="center">较高</td>
+<td align="center">高</td>
+</tr>
+<tr>
+<td align="center">集成难易度</td>
+<td align="center">中</td>
+<td align="center">中</td>
+</tr>
+<tr>
+<td align="center">文档资料</td>
+<td align="center">一般</td>
+<td align="center">少</td>
+</tr>
+<tr>
+<td align="center">使用热度</td>
+<td align="center">较多（微信、QQ、抖音）</td>
+<td align="center">少见</td>
+</tr>
+</tbody></table>
+<p align="center" style="color:#888888;font-size:13px">表1 框架对比（注：[ - ]：未知；[ <span style="color:#3ddc84">√</span> ]：表示支持；[ <span style="color:#ef2f11">×</span> ]：表示不支持）</p>
+
+<h2 id="测试对比"><a href="#测试对比" class="headerlink" title="测试对比"></a>测试对比</h2><h3 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h3><ul>
+<li>差分生成环境：Windows 10(64位)、CPU i5-6500(3.2GHz)、RAM 16GB</li>
+<li>差分合成环境：SamSung SM-P583、Android 7.0、RAM 3GB</li>
+<li>差分工具：MinGW 32位编译器生成的 BSDiff(4.3)和 Xdelta(3.1.0)  </li>
+</ul>
+<blockquote>
+<p>注：差分生成阶段通常在服务端进行操作，而差分合成阶段通常在手机端进行操作。</p>
+</blockquote>
+<h3 id="第1组测试-15M-左右-APK"><a href="#第1组测试-15M-左右-APK" class="headerlink" title="第1组测试(15M 左右 APK)"></a>第1组测试(15M 左右 APK)</h3><p>这里选取 Flipboard 红板报作为测试对象，版本分别为4.3.12 (14.5MB)、4.3.13 (14.6MB)，测试对比数据如下所示。</p>
+<p><img src="/2020/05/23/Android-Upgrade/02.png" alt="02.png"></p>
+<p align="center" style="color:#888888;font-size:13px;margin-top:-10px">图2 15M 左右 APK 耗时对比</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">BSDiff</th>
+<th align="center">Xdelta3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">差分生成耗时</td>
+<td align="center">19235ms</td>
+<td align="center">1867ms</td>
+</tr>
+<tr>
+<td align="left">差分生成 CPU 占用率</td>
+<td align="center">29%</td>
+<td align="center">10%</td>
+</tr>
+<tr>
+<td align="left">差分生成内存占用率</td>
+<td align="center">88～132MB</td>
+<td align="center">203～209MB</td>
+</tr>
+<tr>
+<td align="left">差分补丁大小</td>
+<td align="center">5.64MB</td>
+<td align="center">5.7MB</td>
+</tr>
+<tr>
+<td align="left">差分合成耗时</td>
+<td align="center">3941ms</td>
+<td align="center">271ms</td>
+</tr>
+<tr>
+<td align="left">差分合成 CPU 占有率</td>
+<td align="center">12%</td>
+<td align="center">1%~8.8%</td>
+</tr>
+<tr>
+<td align="left">差分合成内存占用率</td>
+<td align="center">32.8MB</td>
+<td align="center">28.4MB</td>
+</tr>
+</tbody></table>
+<p align="center" style="color:#888888;font-size:13px">表2  15M 左右 APK 实验数据结果</p>
+
+<h3 id="第2组测试-100M-左右-APK"><a href="#第2组测试-100M-左右-APK" class="headerlink" title="第2组测试(100M 左右 APK)"></a>第2组测试(100M 左右 APK)</h3><p>这里选取微信作为测试对象，版本分别为6.7.3 (75.5MB)、7.0.3 (104MB)，测试对比数据如下所示。</p>
+<p><img src="/2020/05/23/Android-Upgrade/03.png" alt="03.png"></p>
+<p align="center" style="color:#888888;font-size:13px;margin-top:-10px">图3 100M 左右 APK 耗时对比</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">BSDiff</th>
+<th align="center">Xdelta3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">差分生成耗时</td>
+<td align="center">375472ms</td>
+<td align="center">36517ms</td>
+</tr>
+<tr>
+<td align="left">差分生成 CPU 占用率</td>
+<td align="center">29%</td>
+<td align="center">29%</td>
+</tr>
+<tr>
+<td align="left">差分生成内存占用率</td>
+<td align="center">480～681MB</td>
+<td align="center">201～212MB</td>
+</tr>
+<tr>
+<td align="left">差分补丁大小</td>
+<td align="center">76.5MB</td>
+<td align="center">76.4MB</td>
+</tr>
+<tr>
+<td align="left">差分合成耗时</td>
+<td align="center">48539ms</td>
+<td align="center">2915ms</td>
+</tr>
+<tr>
+<td align="left">差分合成 CPU 占有率</td>
+<td align="center">12%</td>
+<td align="center">1%~12%</td>
+</tr>
+<tr>
+<td align="left">差分合成内存占用率</td>
+<td align="center">81.3~186.4MB</td>
+<td align="center">94.3MB</td>
+</tr>
+</tbody></table>
+<p align="center" style="color:#888888;font-size:13px">表3 100M 左右 APK 实验数据结果</p>
+
+<h3 id="第3组测试-500M-左右-APK"><a href="#第3组测试-500M-左右-APK" class="headerlink" title="第3组测试(500M 左右 APK)"></a>第3组测试(500M 左右 APK)</h3><p>这里选取游戏包乱世王者作为测试对象，版本分别为1.6.8.25 (532MB)、1.6.12.26 (560MB)，测试对比数据如下所示。</p>
+<p><img src="/2020/05/23/Android-Upgrade/04.png" alt="04.png"></p>
+<p align="center" style="color:#888888;font-size:13px;margin-top:-10px">图4  500M 左右 APK 耗时对比</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">BSDiff</th>
+<th align="center">Xdelta3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">差分生成耗时</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">68538ms</td>
+</tr>
+<tr>
+<td align="left">差分生成 CPU 占用率</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">30%</td>
+</tr>
+<tr>
+<td align="left">差分生成内存占用率</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">203～212MB</td>
+</tr>
+<tr>
+<td align="left">差分补丁大小</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">144MB</td>
+</tr>
+<tr>
+<td align="left">差分合成耗时</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">14443ms</td>
+</tr>
+<tr>
+<td align="left">差分合成 CPU 占有率</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">1%~12%</td>
+</tr>
+<tr>
+<td align="left">差分合成内存占用率</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">82.7~87.5MB</td>
+</tr>
+</tbody></table>
+<p align="center" style="color:#888888;font-size:13px">表4 500M 左右 APK 实验数据结果</p>
+
+<h3 id="第4组测试-1-8GB-左右-APK"><a href="#第4组测试-1-8GB-左右-APK" class="headerlink" title="第4组测试(1.8GB 左右 APK)"></a>第4组测试(1.8GB 左右 APK)</h3><p>这里选取游戏包绝地求生作为测试对象，版本分别为0.13.5(1.79GB)、0.14.5 (1.86GB)，测试对比数据如下所示。</p>
+<p><img src="/2020/05/23/Android-Upgrade/05.png" alt="05.png"></p>
+<p align="center" style="color:#888888;font-size:13px;margin-top:-10px">图5 1.8G 左右 APK 耗时对比</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">BSDiff</th>
+<th align="center">Xdelta3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">差分生成耗时</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">514286ms</td>
+</tr>
+<tr>
+<td align="left">差分生成 CPU 占用率</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">31%</td>
+</tr>
+<tr>
+<td align="left">差分生成内存占用率</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">203～212MB</td>
+</tr>
+<tr>
+<td align="left">差分补丁大小</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">0.99GB</td>
+</tr>
+<tr>
+<td align="left">差分合成耗时</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">117527ms</td>
+</tr>
+<tr>
+<td align="left">差分合成 CPU 占有率</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">1%~12%</td>
+</tr>
+<tr>
+<td align="left">差分合成内存占用率</td>
+<td align="center"><span style="color:#ef2f11">×</span></td>
+<td align="center">83.7~94.9 MB</td>
+</tr>
+</tbody></table>
+<p align="center" style="color:#888888;font-size:13px">表5 1.8G 左右 APK 实验数据结果</p>
+
+<blockquote>
+<p>注：数据来源于5次实验数据平均值</p>
+</blockquote>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>由前面几组测试实验结合相关源码，可以得出如下结论：</p>
+<p>1）从差分耗时方面，Xdelta3 在差分生成和差分合成都优于 BSDiff，两者的差距约10倍左右。两者的差分合成都优于差分生成；</p>
+<p>2）从内存消耗方面，随着 APK 包的大小增大，BSDiff 的内存也会翻倍增大占用，而 Xdelta3 却是稳定一定范围；</p>
+<p>3）当 APK 包达到一定大小时，BSDiff(编译器为32位)会出现差分失败，从 C 的源代码可以分析出，差分时进行大量动态申请内存空间导致，也是占用内存大的主要原因，而 Xdelta 依旧可以差分；</p>
+<p>4）另外，BSDiff 需将新旧文件一次性读进内存形成字符串字典，进行排序(qsufsort)、搜索(search)对比等等，产生相关 diffstring 和 extra string 块，最后进行 bzip2 压缩生成增量包（patch），同时也发现排序、搜索等差异对比操作与 bzip2 压缩生成操作各占一半时间；而 Xdelta3 应用相关窗口算法对新旧文件分块读进内存，进行差异对比生成增量包；</p>
+<p>5）需要注意的是，两个加固包产生的增量包不能与无加固包进行合成。</p>
+<blockquote>
+<p>提示：如发现文中有误，欢迎批评指正，谢谢您支持！</p>
+</blockquote>
+<hr>
+
+                </section>
+
+                
+                
+                
+
+                
+  <div class="valine_comments" id="valine_comments"></div>
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#valine_comments' ,
+        appId: 'U6eh11W93xRWiH6pkhqG7X9r-gzGzoHsz',
+        appKey: 'cW84nPwssciLpcIM3lLaHvPA',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        visitor:true,
+        enableQQ:true,
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+
+            
+            <nav class="dis_flex al_post_nav">
+                <a class="al_post_nav_item dis_flex_acenter" href="/2020/05/24/Xdelta3-Header/">
+                    
+                        <svg class="al_arrow">
+                            <use xmlns="http://www.w3.org/2000/svg" xlink:href="/assets/svg_icons.svg#svg-arrow-left"></use>
+                        </svg>
+                        <span class="al_text_ellipsis al_post_nav_desc">Xdelta3 增量文件头解析</span>
+                    
+                </a>
+                <a class="al_post_nav_item dis_flex_acenter" href="/2020/05/23/hello-world/">
+                    
+                        <span class="al_text_ellipsis al_post_nav_desc">Hello World</span>
+                        <svg class="al_arrow">
+                            <use xmlns="http://www.w3.org/2000/svg" xlink:href="/assets/svg_icons.svg#svg-arrow-right"></use>
+                        </svg>
+                    
+                </a>
+            </nav>
+        </div>
+    </div>
+
+
+        <div class="al_index_footer dis_flex_center">
+    <div class="al_index_footer_item al_index_footer_title">
+        Xuzx
+    </div>
+
+    
+    
+
+    <div class="al_index_footer_item al_index_footer_extra">
+        Created By 
+        <a href="https://github.com/iGuan7u/Acetolog" target="_blank" rel="noopener">AcetoLog</a>
+         · Power By 
+        <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+    </div>
+
+    <div class="al_index_footer_item al_index_footer_extra_right">
+        All Right Reserved
+    </div>
+</div>
+
+        <script type="text/javascript" async="async" src="/javascripts/acelog.js"></script>
+        
+        
+        
+        
+    </body>
+</html>
+        
